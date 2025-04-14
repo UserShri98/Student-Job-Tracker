@@ -5,7 +5,7 @@ const JobCard = ({ job, onDelete, onUpdateStatus }) => {
   const [newStatus, setNewStatus] = useState(job.status);
 
   const handleUpdate = () => {
-    onUpdateStatus(job.id, newStatus);
+    onUpdateStatus(job._id, newStatus);
     setEditing(false);
   };
 
@@ -31,7 +31,7 @@ const JobCard = ({ job, onDelete, onUpdateStatus }) => {
         ) : (
           <>
             <button onClick={() => setEditing(true)}>Edit Status</button>
-            <button onClick={() => onDelete(job.id)}>Delete</button>
+            <button onClick={() => onDelete(job._id)}>Delete</button>
           </>
         )}
       </div>

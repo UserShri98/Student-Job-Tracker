@@ -1,32 +1,37 @@
-const JOBS_KEY = "jobs";
+const BASE_URL = "http://localhost:5000/api";
 
-const getJobsFromStorage = () => {
-  const data = localStorage.getItem(JOBS_KEY);
-  return data ? JSON.parse(data) : [];
+const addJob = async (job) => {
+  const res = await fetch(`${BASE_URL}`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(job),
+  });
+  return await res.json();
 };
 
-const saveJobsToStorage = (jobs) => {
-  localStorage.setItem(JOBS_KEY, JSON.stringify(jobs));
+const getAllJobs = async () => {
+  const res = await fetch(`${BASE_URL}`);
+  return await res.json();
 };
 
-const addJob = (job) => {
-  const jobs = getJobsFromStorage();
-  jobs.push({ ...job, id: Date.now().toString() });
-  saveJobsToStorage(jobs);
+const deleteJob = async (id) => {
+  const res = await fetch(`${BASE_URL}/${id}`, {
+    method: "DELETE",
+  });
+  return await res.json();
 };
 
-const getAllJobs = () => getJobsFromStorage();
-
-const deleteJob = (id) => {
-  const jobs = getJobsFromStorage().filter((job) => job.id !== id);
-  saveJobsToStorage(jobs);
-};
-
-const updateJobStatus = (id, newStatus) => {
-  const jobs = getJobsFromStorage().map((job) =>
-    job.id === id ? { ...job, status: newStatus } : job
-  );
-  saveJobsToStorage(jobs);
+const updateJobStatus = async (id, newStatus) => {
+  const res = await fetch(`${BASE_URL}/${id}`, {
+    method: "PATCH",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({ status: newStatus }),
+  });
+  return await res.json();
 };
 
 export default {

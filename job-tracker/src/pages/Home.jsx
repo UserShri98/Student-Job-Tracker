@@ -14,14 +14,25 @@ const Home = () => {
   const [filteredJobs, setFilteredJobs] = useState([]);
 
   useEffect(() => {
-    const data = jobService.getAllJobs();
-    setJobs(data);
-    setFilteredJobs(data);
+    const fetchData = async () => {
+      try {
+        const data = await jobService.getAllJobs();
+        console.log("Fetched jobs:", data); 
+
+        setJobs(data);
+        setFilteredJobs(data);
+      } catch (err) {
+        console.error("Failed to fetch jobs", err);
+      }
+    };
+  
+    fetchData();
   }, []);
+  
 
   const handleDelete = (id) => {
     jobService.deleteJob(id);
-    const updated = jobs.filter((job) => job.id !== id);
+    const updated = jobs.filter((job) => job._id !== id);
     setJobs(updated);
     setFilteredJobs(updated);
   };
@@ -29,7 +40,7 @@ const Home = () => {
   const handleStatusUpdate = (id, status) => {
     jobService.updateJobStatus(id, status);
     const updated = jobs.map((job) =>
-      job.id === id ? { ...job, status } : job
+      job._id === id ? { ...job, status } : job
     );
     setJobs(updated);
     setFilteredJobs(updated);
@@ -45,7 +56,7 @@ const Home = () => {
   return (
     <div>
     <h2>Your Job Applications</h2>
-    <button onClick={() => navigate("/add")}>➕ Add New Job</button>
+    <button onClick={() => navigate("/add")}> Add New Job</button>
     <FilterBar onFilter={handleFilter} />
     <div className="job-list">
       {filteredJobs.length === 0 ? (
@@ -53,8 +64,8 @@ const Home = () => {
       ) : (
         filteredJobs.map((job) => (
           <JobCard
-            key={job.id}
-            job={job}
+          key={job._id}
+          job={job}
             onDelete={handleDelete}
             onUpdateStatus={handleStatusUpdate}
           />
